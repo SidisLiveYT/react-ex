@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sub:server": "node server/deep-core.js",
+    "sub:client": "npm start --prefix client",
+    "sub:web": "concurrently \"npm run sub:server\" \"npm run sub:client\""
   },
   "repository": {
     "type": "git",
@@ -21,5 +25,9 @@
     "body-parser": "^1.20.0",
     "discord.js": "^13.6.0",
     "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "concurrently": "^7.1.0",
+    "nodemon": "^2.0.15"
   }
 }

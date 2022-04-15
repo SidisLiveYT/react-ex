@@ -4,7 +4,11 @@ import { urlencoded } from "body-parser";
 class routerWeb {
   constructor() {
     this.expressApp = expressApp();
-    this.expressApp.use({ urlencoded });
+    this.expressApp.use(
+      urlencoded({
+        extended: true,
+      })
+    );
     this.expressApp.listen(8080);
   }
   startListener() {
@@ -14,3 +18,6 @@ class routerWeb {
     });
   }
 }
+
+let router = new routerWeb();
+router.startListener();
