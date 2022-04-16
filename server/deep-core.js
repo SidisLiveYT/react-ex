@@ -1,8 +1,5 @@
 import expressApp from "express";
 import bodyParser from "body-parser";
-import fetch from "node-fetch";
-import { URLSearchParams } from "url";
-import Axios from "axios";
 import "dotenv/config";
 
 const { text, urlencoded } = bodyParser;
@@ -49,56 +46,12 @@ class routerWeb {
         return res.status(300).redirect(routerWeb.defaultUri?.discordUri);
       let cookedTokens = await this.#getTokens(rawCode, "oauth");
       if (!cookedTokens?.access_token) throw new Error("NoTokenProvided");
-      let apiResponse = await this.#getApiUri("/users/@me", "GET", {
+      let apiResponse = await this.#getApiUri("users/@me/guilds", "GET", {
         authorization: "Bearer " + cookedTokens?.access_token,
       });
       console.log(apiResponse);
       res.status(300).redirect(routerWeb.defaultUri?.discordUri);
     });
-  }
-
-  async #getTokens(oauthCode, grantType = "oauth") {
-    if (!oauthCode) throw new Error("NoCodeProvided");
-    let queryData = {
-        client_id: process.env.BOT_CLIENT_ID,
-        client_secret: process.env.BOT_CLIENT_SECRET,
-        redirect_uri: process.env.API_REDIRECT_URI,
-        scope:
-          "identify email guilds guilds.members.read messages.read connections",
-        grant_type:
-          grantType?.toLowerCase()?.trim() === "oauth"
-            ? "authorization_code"
-            : "refresh_token",
-      },
-      queryHeaders = {
-        "Content-Type": "application/x-www-form-urlencoded",
-      };
-
-    if (grantType?.toLowerCase()?.trim() === "oauth")
-      queryData.code = oauthCode;
-    else queryData.refresh_token = oauthCode;
-    let rawResponse = await fetch(routerWeb.defaultUri?.tokenUri, {
-      method: "POST",
-      body: new URLSearchParams(queryData),
-      headers: queryHeaders,
-    })?.catch((error) => {
-      throw error;
-    });
-    return await rawResponse?.json();
-  }
-
-  async #getApiUri(
-    subUri = "/users/@me",
-    rawMethod = "GET",
-    queryHeaders = {}
-  ) {
-    let rawResponse = await Axios(routerWeb.defaultUri?.apiUri + subUri, {
-      method: rawMethod,
-      headers: queryHeaders,
-    })?.catch((error) => {
-      throw error;
-    });
-    return rawResponse?.data;
   }
 }
 
